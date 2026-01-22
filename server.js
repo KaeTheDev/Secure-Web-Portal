@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db'); // DB Connection
+const userRoutes = require('./routes/userRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 });
 
 // Mount User and Bookmark routes
+app.unsubscribe('/api/users', userRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3001;
