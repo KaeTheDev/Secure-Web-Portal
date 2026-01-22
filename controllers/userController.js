@@ -1,14 +1,14 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const { signToken } = require("../utils/auth");
 
 // Register User
 const registerUser = async(req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { email, password } = req.body;
 
         // Explicitly require password for local registration
-        if(!username || !email || !password){
+        if(!email || !password){
             return res.status(400).json({ message: "Please provide all fields" });
         }
 
@@ -19,7 +19,6 @@ const registerUser = async(req, res) => {
 
         // Create local-auth user
         const newUser = await User.create({
-            username,
             email,
             password
         });
@@ -66,3 +65,5 @@ const loginUser = async(req, res) => {
         res.status(500).json({ message: "Server error" });
       }
 };
+
+module.exports = { registerUser, loginUser };
