@@ -4,7 +4,7 @@ const expiration = '2h';
 
 module.exports = {
     authMiddleware: function(req, res, next) {
-        let token = req.body.token || req.query.token || req.headers.authorization;
+        let token = req.body?.token || req.query?.token || req.headers?.authorization;
 
         if(!token) {
             return res.status(401).json({ message: 'You must be logged in to do that.' });

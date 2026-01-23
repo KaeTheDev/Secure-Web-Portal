@@ -28,4 +28,18 @@ const createBookmark = async (req, res) => {
     }
   };
 
-module.exports = { createBookmark };
+// GET /api/bookmarks
+// Get all bookmarks for the logged-in user
+const getBookmarks = async(req, res) =>{
+    console.log('REQ USER:', req.user); 
+    try {
+        const bookmarks = await Bookmark.find({ user: req.user._id });
+        res.json(bookmarks);
+    } catch(err) {
+        console.error('GET BOOKMARKS ERROR:', err);
+        console.error(err);
+        res.status(500).json({ message: 'Server error', error: err });
+    }
+};
+
+module.exports = { createBookmark, getBookmarks };
