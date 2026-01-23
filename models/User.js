@@ -17,13 +17,16 @@ const userSchema = new Schema({
         unique: true,
         sparse: true // allows multiple users with null githubid
     },
-
     email: {
         type: String,
-        required: true,
+        required: function() {
+            // Required if there is no githubId
+            return !this.githubId;
+        },
         unique: true,
         match: [/.+@.+\..+/, "Must match an email address!"],
-    }
+    },
+    
 });
 
 // Validate auth method

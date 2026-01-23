@@ -7,7 +7,7 @@ passport.use(
         {
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: process.env.GITHUB_CALLBACK_URL, // 'http://localhost:3001/api/users/auth/github/callback
+            callbackURL: process.env.GITHUB_CALLBACK_URL, // 'http://localhost:3000/api/users/auth/github/callback
         },
 
         // This is the "verify" callback
@@ -21,11 +21,16 @@ passport.use(
                     return done(null, existingUser);
                 }
 
+                // Safely get email
+                const email = profile.emails && profile.emails.length > 0
+                ? profile.emails[0].value
+                : undefined;
+
                 // If it's a new user, create a record in our database
                 const newUser = new User({
                     githubId: profile.id,
                     username: profile.username,
-                    email: profile.emails[0].value, // some providers return an array of emails
+                    email: email, 
                 });
 
                 await newUser.save();
@@ -45,3 +50,5 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
     User.findById(id, (err, user) => done(err, user));
 });
+
+module.exports = passport;

@@ -5,9 +5,11 @@ dotenv.config();
 const express = require('express');
 
 const connectDB = require('./config/db'); // DB Connection
+const passport = require('./config/passport');
+const session = require('express-session');
 const userRoutes = require('./routes/userRoutes');
 
-// Connect to MongoDB
+// Connect to MongoDBclear
 connectDB();
 
 // Create Express App
@@ -15,6 +17,12 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
+
+// Session middleware
+app.use(session({ secret: 'Shhhhsupersecret', resave: false, saveUninitialized: false }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Test route to confirm server is running
 app.get('/', (req, res) => {
