@@ -42,21 +42,18 @@ const getBookmarks = async (req, res) => {
   }
 };
 
+// PUT /api/bookmarks
+// Update a single bookmark
+
 const updateBookmarks = async (req, res) => {
   try {
-    const bookmark = await Bookmark.findOneAndUpdate(
-      {
-        _id: req.params.id, // bookmark ID from URL
-        user: req.user._id, // logged-in user from JWT
-      },
-      req.body,
-      { new: true }
+    const bookmark = await Bookmark.findOneAndUpdate({_id: req.params.id, // bookmark ID from URL
+    user: req.user._id, // logged-in user from JWT
+}, req.body,{ new: true }
     );
 
     if (!bookmark) {
-      return res
-        .status(404)
-        .json({ message: "Bookmark not found or not authorized" });
+      return res.status(404).json({ message: "Bookmark not found or not authorized" });
     }
 
     res.json(bookmark);
@@ -66,4 +63,21 @@ const updateBookmarks = async (req, res) => {
   }
 };
 
-module.exports = { createBookmark, getBookmarks, updateBookmarks };
+// DELETE /api/bookmarks
+// Delete a single bookmark
+const deleteBookmarks = async(req, res) => {
+  try {
+    const bookmark = await Bookmark.findById({ _id: req.params.id, user: req.user._id});
+    if(!bookmark) return res.status(404).json({ message: 'No bookmark found' });
+    if(bookmark.user.toString() !== req.user._id.toString())
+      return res.status(403).json({ message: 'Not authorized' });
+
+    await bookmark.deleteOne();
+    res.json({ message: 'Bookmark deleted' });
+  } catch(err){
+    console.error(err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+};
+
+module.exports = { createBookmark, getBookmarks, updateBookmarks, deleteBookmarks };
