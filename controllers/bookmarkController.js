@@ -42,6 +42,20 @@ const getBookmarks = async (req, res) => {
   }
 };
 
+// Get a single bookmark by ID
+const getBookmarkById = async (req, res) => {
+  try {
+    const bookmark = await Bookmark.findById(req.params.id);
+    if (!bookmark) return res.status(404).json({ message: 'No bookmark found' });
+    if (bookmark.user.toString() !== req.user._id.toString())
+      return res.status(403).json({ message: 'Not authorized' });
+    res.json(bookmark);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+};
+
 // PUT /api/bookmarks
 // Update a single bookmark
 
@@ -80,4 +94,4 @@ const deleteBookmarks = async(req, res) => {
   }
 };
 
-module.exports = { createBookmark, getBookmarks, updateBookmarks, deleteBookmarks };
+module.exports = { createBookmark, getBookmarks, updateBookmarks, deleteBookmarks, getBookmarkById };
