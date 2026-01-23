@@ -8,6 +8,7 @@ const connectDB = require('./config/db'); // DB Connection
 const passport = require('./config/passport');
 const session = require('express-session');
 const userRoutes = require('./routes/userRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes'); 
 
 // Connect to MongoDBclear
 connectDB();
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 
 // Mount User and Bookmark routes
 app.use('/api/users', userRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3001;

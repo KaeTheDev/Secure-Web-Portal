@@ -6,12 +6,13 @@ module.exports = {
     authMiddleware: function(req, res, next) {
         let token = req.body.token || req.query.token || req.headers.authorization;
 
-        if(req.headers.authorization) {
-            token = token.split('').pop().trim();
-        }
-
         if(!token) {
             return res.status(401).json({ message: 'You must be logged in to do that.' });
+        }
+
+        // If the token comes in the header, remove the "Bearer " prefix
+        if(token.startsWith('Bearer ')) {
+            token = token.slice(7).trim();
         }
 
         try {
@@ -25,7 +26,6 @@ module.exports = {
     },
     signToken: function({ username, email, _id }) {
         const payload = { username, email, _id };
-
         return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
     },
 };
